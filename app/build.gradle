@@ -3,15 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
-apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
     defaultConfig {
         applicationId "br.com.alura.aluraesporte"
-        minSdkVersion 19
-        targetSdkVersion 29
+        minSdkVersion 21
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -59,4 +58,23 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:29.3.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Declare the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+
+    // Koin main features for Android
+//    implementation "io.insert-koin:koin-android:$koin_version"
+// No more koin-android-viewmodel, koin-android-scope, koin-android-fragment
+
+//// Java Compatibility
+//    implementation "io.insert-koin:koin-android-compat:$koin_version"
+//// Jetpack WorkManager
+//    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
+//// Navigation Graph
+//    implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
+//// Jetpack Compose
+//    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
+
 }
