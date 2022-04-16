@@ -33,14 +33,16 @@ class MainActivity : AppCompatActivity() {
 
         firebaseAuth = Firebase.auth
 
-       firebaseAuth.createUserWithEmailAndPassword(
-            "pablo@aluraesporte.com", "teste123"
-        ).addOnSuccessListener { task->
-           Toast.makeText(this, "usuario foi cadastrado com sucesso", Toast.LENGTH_LONG).show()
-       }.addOnFailureListener {
-           Log.i("exception cadastro", "Erro: ${it.message}")
-           Toast.makeText(this, "deu erro $it", Toast.LENGTH_LONG).show()
-       }
+//        cadastraUsuario()
+//        autenticaUsuario()
+
+        val usuario = firebaseAuth.currentUser
+        if(usuario != null )
+            Toast.makeText(this, "usuario logado doido", Toast.LENGTH_LONG).show()
+        else
+            Toast.makeText(this,"nao deu bom tio", Toast.LENGTH_LONG).show()
+
+        firebaseAuth.signOut()
 
         controlador.addOnDestinationChangedListener { _,
                                                       destination,
@@ -63,6 +65,27 @@ class MainActivity : AppCompatActivity() {
         }
         main_activity_bottom_navigation
             .setupWithNavController(controlador)
+    }
+
+    private fun autenticaUsuario() {
+        firebaseAuth.signInWithEmailAndPassword(
+            "pablo@aluraesporte.com", "teste123"
+        ).addOnSuccessListener {
+            Toast.makeText(this, "login deu bom d+ ${firebaseAuth.currentUser?.email}", Toast.LENGTH_LONG).show()
+        }.addOnFailureListener {
+            Toast.makeText(this, "erro doido em n foi nao: $it", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun cadastraUsuario() {
+        firebaseAuth.createUserWithEmailAndPassword(
+            "pablo@aluraesporte.com", "teste123"
+        ).addOnSuccessListener { task ->
+            Toast.makeText(this, "usuario foi cadastrado com sucesso ${firebaseAuth.currentUser?.email} ", Toast.LENGTH_LONG).show()
+        }.addOnFailureListener {
+            Log.i("exception cadastro", "Erro: ${it.message}")
+            Toast.makeText(this, "deu erro $it", Toast.LENGTH_LONG).show()
+        }
     }
 
 }
