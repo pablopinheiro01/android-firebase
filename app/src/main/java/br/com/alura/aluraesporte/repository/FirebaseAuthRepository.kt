@@ -2,6 +2,8 @@ package br.com.alura.aluraesporte.repository
 
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 
 private const val TAG = "FirebaseAuthRepository"
@@ -29,9 +31,19 @@ class FirebaseAuthRepository(private val firebaseAuth: FirebaseAuth) {
         }
     }
 
-    fun cadastra(email: String, senha: String) {
+    fun cadastra(email: String, senha: String): LiveData<Boolean>{
+        val liveData = MutableLiveData<Boolean>()
+
         firebaseAuth.createUserWithEmailAndPassword(email, senha)
-            .addOnSuccessListener { task -> Log.i(TAG, "Cadastro foi feito filhote") }
-            .addOnFailureListener { exception -> Log.i(TAG, "Erro feio $exception") }
+            .addOnSuccessListener { task ->
+                Log.i(TAG, "Cadastro foi feito filhote")
+                liveData.value = true
+            }
+            .addOnFailureListener { exception ->
+                Log.i(TAG, "Erro feio $exception")
+                liveData.value = false
+            }
+
+        return liveData
     }
 }
