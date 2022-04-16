@@ -9,6 +9,7 @@ import br.com.alura.aluraesporte.database.AppDatabase
 import br.com.alura.aluraesporte.database.dao.PagamentoDAO
 import br.com.alura.aluraesporte.database.dao.ProdutoDAO
 import br.com.alura.aluraesporte.model.Produto
+import br.com.alura.aluraesporte.repository.FirebaseAuthRepository
 import br.com.alura.aluraesporte.repository.LoginRepository
 import br.com.alura.aluraesporte.repository.PagamentoRepository
 import br.com.alura.aluraesporte.repository.ProdutoRepository
@@ -18,6 +19,9 @@ import br.com.alura.aluraesporte.ui.fragment.PagamentoFragment
 import br.com.alura.aluraesporte.ui.recyclerview.adapter.ListaPagamentosAdapter
 import br.com.alura.aluraesporte.ui.recyclerview.adapter.ProdutosAdapter
 import br.com.alura.aluraesporte.ui.viewmodel.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -79,6 +83,7 @@ val daoModule = module {
     single<PagamentoRepository> { PagamentoRepository(get()) }
     single<LoginRepository> { LoginRepository(get()) }
     single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get())}
+    single<FirebaseAuthRepository>{FirebaseAuthRepository(get())}
 }
 
 val uiModule = module {
@@ -95,4 +100,9 @@ val viewModelModule = module {
     viewModel<PagamentoViewModel> { PagamentoViewModel(get(), get()) }
     viewModel<LoginViewModel> {LoginViewModel(get())}
     viewModel<EstadoAppViewModel> {EstadoAppViewModel()}
+    viewModel<CadastroUsuarioViewModel> {CadastroUsuarioViewModel(get())}
+}
+
+val firebaseModule = module{
+    single<FirebaseAuth>{ Firebase.auth}
 }
