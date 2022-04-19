@@ -17,6 +17,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.main_activity.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
 
     private val controlador by lazy {
@@ -24,12 +26,19 @@ class MainActivity : AppCompatActivity() {
     }
     private val viewModel: EstadoAppViewModel by viewModel()
 
-    private lateinit var firebaseAuth: FirebaseAuth
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+
+//codigo de teste de integracao
+//        Firebase.auth.signInWithEmailAndPassword(
+//            "pablo@aluraesporte.com", "teste123"
+//        ).addOnSuccessListener {
+//            Log.i(TAG, "onCreate: Usuario logado")
+//        }.addOnFailureListener {
+//            Log.i(TAG, "onCreate: Usuario logado")
+//        }
 
         controlador.addOnDestinationChangedListener { _,
                                                       destination,
