@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import br.com.alura.aluraesporte.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -35,28 +36,31 @@ class FirebaseAuthRepository(private val firebaseAuth: FirebaseAuth) {
         }
     }
 
-    fun cadastra(email: String, senha: String): LiveData<Resource<Boolean>>{
+    fun cadastra(usuario: Usuario): LiveData<Resource<Boolean>>{
         val liveData = MutableLiveData<Resource<Boolean>>()
         try {
-            firebaseAuth.createUserWithEmailAndPassword(email, senha)
+            firebaseAuth.createUserWithEmailAndPassword(usuario.email, usuario.senha)
                 .addOnSuccessListener { task ->
                     Log.i(TAG, "Cadastro foi feito filhote")
                     liveData.value = Resource(true)
                 }
                 .addOnFailureListener { exception ->
                     Log.i(TAG, "Erro feio $exception")
-                    val mensagemErro:String = when(exception){
-                        is FirebaseAuthWeakPasswordException -> "Senha precisa de pelo menos 6 digitos"
-                        is FirebaseAuthInvalidCredentialsException -> "Email invalido"
-                        is FirebaseAuthUserCollisionException -> "Email já cadastrado"
-                        else -> "Erro desconhecido ${exception.message}"
-                    }
+                    val mensagemErro: String = devolveErroDeCadastro(exception)
                     liveData.value = Resource(false, mensagemErro)
                 }
         } catch (e: Exception) {
             liveData.value = Resource(false, "Erro desconhecido")
         }
-
         return liveData
+    }
+
+    private fun devolveErroDeCadastro(exception: java.lang.Exception): String {
+        return when (exception) {
+            is FirebaseAuthWeakPasswordException -> "Senha precisa de pelo menos 6 digitos"
+            is FirebaseAuthInvalidCredentialsException -> "Email invalido"
+            is FirebaseAuthUserCollisionException -> "Email já cadastrado"
+            else -> "Erro desconhecido ${exception.message}"
+        }
     }
 }

@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import br.com.alura.aluraesporte.R
+import br.com.alura.aluraesporte.extensions.snackBar
+import br.com.alura.aluraesporte.model.Usuario
 import br.com.alura.aluraesporte.ui.viewmodel.CadastroUsuarioViewModel
 import br.com.alura.aluraesporte.ui.viewmodel.ComponentesVisuais
 import br.com.alura.aluraesporte.ui.viewmodel.EstadoAppViewModel
@@ -39,47 +41,69 @@ class CadastroUsuarioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         estadoAppViewModel.temComponentes = ComponentesVisuais()
+
+        configuraBotaoCadastro()
+    }
+
+    private fun configuraBotaoCadastro() {
         cadastro_usuario_botao_cadastrar.setOnClickListener {
 
-            cadastro_usuario_email.error = null
-            cadastro_usuario_senha.error = null
-            cadastro_usuario_confirma_senha.error = null
+            limpaTodosCampos()
 
             val email = cadastro_usuario_email.editText?.text.toString()
             val senha = cadastro_usuario_senha.editText?.text.toString()
             val confirmaSenha: String = cadastro_usuario_confirma_senha.editText?.text.toString()
 
-            var valido = true
+            val valido = validaCampos(email, senha, confirmaSenha)
 
-            if(email.isBlank()){
-                cadastro_usuario_email.error = "E-mail é necessario"
-                valido = false
-            }
-
-            if(senha.isBlank()) {
-                cadastro_usuario_senha.error = "Senha é necessaria"
-                valido = false
-            }
-
-            if(senha != confirmaSenha){
-                cadastro_usuario_confirma_senha.error = "Senhas diferentes"
-                valido = false
-            }
-
-            if(valido){
-                cadastroUsuarioViewModel.cadastra(email,senha).observe(viewLifecycleOwner, Observer {
-                    it?.let { recurso ->
-                        if(recurso.dado){
-                            Snackbar.make(view, "Sucesso no cadastro", Snackbar.LENGTH_SHORT).show()
-                            controlador.popBackStack()
-                        }else{
-                            val mensagemErro = recurso.erro ?: "Ocorreu uma falha no cadastro"
-                            Snackbar.make(view, mensagemErro, Snackbar.LENGTH_SHORT).show()
-                        }
-                    }
-                })
+            if (valido) {
+                cadastra(Usuario(email, senha))
             }
         }
+    }
+
+    private fun cadastra(usuario: Usuario) {
+        cadastroUsuarioViewModel.cadastra(usuario).observe(viewLifecycleOwner, Observer {
+            it?.let { recurso ->
+                if (recurso.dado) {
+                    view?.snackBar("Sucesso no cadastro")
+                    controlador.popBackStack()
+                } else {
+                    val mensagemErro = recurso.erro ?: "Ocorreu uma falha no cadastro"
+                    view?.snackBar(mensagemErro)
+                }
+            }
+        })
+    }
+
+    private fun validaCampos(
+        email: String,
+        senha: String,
+        confirmaSenha: String
+    ): Boolean {
+        var valido = true
+
+        if (email.isBlank()) {
+            cadastro_usuario_email.error = "E-mail é necessario"
+            valido = false
+        }
+
+        if (senha.isBlank()) {
+            cadastro_usuario_senha.error = "Senha é necessaria"
+            valido = false
+        }
+
+        if (senha != confirmaSenha) {
+            cadastro_usuario_confirma_senha.error = "Senhas diferentes"
+            valido = false
+        }
+        return valido
+    }
+
+    private fun limpaTodosCampos() {
+        cadastro_usuario_email.error = null
+        cadastro_usuario_senha.error = null
+        cadastro_usuario_confirma_senha.error = null
     }
 
 }
