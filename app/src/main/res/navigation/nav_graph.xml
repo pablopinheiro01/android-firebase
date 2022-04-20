@@ -99,6 +99,6 @@
     <fragment
         android:id="@+id/minhaConta"
         android:name="br.com.alura.aluraesporte.ui.fragment.MinhaContaFragment"
-        android:label="minha_conta"
+        android:label="Minha Conta"
         tools:layout="@layout/minha_conta" />
 </navigation>
