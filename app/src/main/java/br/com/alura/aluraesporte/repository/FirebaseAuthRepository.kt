@@ -5,10 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import br.com.alura.aluraesporte.model.Usuario
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.*
 import java.lang.IllegalArgumentException
 
 private const val TAG = "FirebaseAuthRepository"
@@ -17,14 +14,6 @@ class FirebaseAuthRepository(private val firebaseAuth: FirebaseAuth) {
 
     fun desloga() {
         firebaseAuth.signOut()
-    }
-
-    private fun autenticaUsuario(firebaseAuth: FirebaseAuth) {
-        firebaseAuth.signInWithEmailAndPassword(
-            "pablo@aluraesporte.com", "teste123"
-        ).addOnSuccessListener {
-        }.addOnFailureListener {
-        }
     }
 
     fun cadastra(usuario: Usuario): LiveData<Resource<Boolean>>{
@@ -58,5 +47,24 @@ class FirebaseAuthRepository(private val firebaseAuth: FirebaseAuth) {
     fun estaLogado(): Boolean {
         val usuario = firebaseAuth.currentUser
         return usuario != null
+    }
+
+    fun autentica(usuario: Usuario): LiveData<Resource<Boolean>> {
+        val liveData = MutableLiveData<Resource<Boolean>>()
+        firebaseAuth.signInWithEmailAndPassword(usuario.email, usuario.senha)
+            .addOnCompleteListener{ task ->
+                if(task.isSuccessful){
+                    liveData.value = Resource(true)
+                }else{
+                    Log.e(TAG, "autentica: ", task.exception)
+                    val mensagemErro:String = when(task.exception){
+                        is FirebaseAuthInvalidUserException -> "E-mail invalido"
+                        is FirebaseAuthInvalidCredentialsException -> "Credenciais Invalidas"
+                        else -> "Erro desconhecido"
+                    }
+                    liveData.value = Resource(false, mensagemErro)
+                }
+            }
+        return liveData
     }
 }
