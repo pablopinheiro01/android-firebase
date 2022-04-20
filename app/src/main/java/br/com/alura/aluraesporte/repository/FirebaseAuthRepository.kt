@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import br.com.alura.aluraesporte.model.Usuario
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import java.lang.IllegalArgumentException
 
@@ -51,20 +52,28 @@ class FirebaseAuthRepository(private val firebaseAuth: FirebaseAuth) {
 
     fun autentica(usuario: Usuario): LiveData<Resource<Boolean>> {
         val liveData = MutableLiveData<Resource<Boolean>>()
-        firebaseAuth.signInWithEmailAndPassword(usuario.email, usuario.senha)
-            .addOnCompleteListener{ task ->
-                if(task.isSuccessful){
-                    liveData.value = Resource(true)
-                }else{
-                    Log.e(TAG, "autentica: ", task.exception)
-                    val mensagemErro:String = when(task.exception){
-                        is FirebaseAuthInvalidUserException -> "E-mail invalido"
-                        is FirebaseAuthInvalidCredentialsException -> "Credenciais Invalidas"
-                        else -> "Erro desconhecido"
+        try {
+            firebaseAuth.signInWithEmailAndPassword(usuario.email, usuario.senha)
+                .addOnCompleteListener{ task ->
+                    if(task.isSuccessful){
+                        liveData.value = Resource(true)
+                    }else{
+                        Log.e(TAG, "autentica: ", task.exception)
+                        val mensagemErro: String = devolveErroDeAutenticacao(task.exception)
+                        liveData.value = Resource(false, mensagemErro)
                     }
-                    liveData.value = Resource(false, mensagemErro)
                 }
-            }
+        } catch(e:Exception){
+            liveData.value = Resource(false, "Email ou senha nao podem ser vazios")
+        }
         return liveData
+    }
+
+    private fun devolveErroDeAutenticacao(exception: Exception?): String {
+        return when (exception) {
+            is FirebaseAuthInvalidUserException -> "E-mail invalido"
+            is FirebaseAuthInvalidCredentialsException -> "Credenciais Invalidas"
+            else -> "Erro desconhecido"
+        }
     }
 }
