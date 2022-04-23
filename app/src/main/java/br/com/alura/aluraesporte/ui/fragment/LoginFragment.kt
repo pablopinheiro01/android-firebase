@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.login.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class LoginFragment : Fragment() {
+class LoginFragment : BaseFragment() {
 
     private val controlador by lazy {
         findNavController()
@@ -57,13 +57,13 @@ class LoginFragment : Fragment() {
 //        configuraBotaoCadastro()
     }
 
-    private fun configuraBotaoCadastro() {
-        login_botao_cadastrar_usuario.setOnClickListener {
-            val direcao = LoginFragmentDirections
-                .acaoLoginParaCadastroUsuario()
-            controlador.navigate(direcao)
-        }
-    }
+//    private fun configuraBotaoCadastro() {
+//        login_botao_cadastrar_usuario.setOnClickListener {
+//            val direcao = LoginFragmentDirections
+//                .acaoLoginParaCadastroUsuario()
+//            controlador.navigate(direcao)
+//        }
+//    }
 
     private fun configuraBotaoLogin(view: View) {
         login_botao_logar.setOnClickListener {
@@ -113,8 +113,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun vaiParaListaProdutos() {
-        val direcao = LoginFragmentDirections.acaoLoginParaListaProdutos()
-        controlador.navigate(direcao)
+//        val direcao = LoginFragmentDirections.acaoLoginParaListaProdutos()
+//        controlador.navigate(direcao)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
