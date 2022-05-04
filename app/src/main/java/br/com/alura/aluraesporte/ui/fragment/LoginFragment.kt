@@ -20,6 +20,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.login.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -49,8 +50,11 @@ class LoginFragment : Fragment() {
         estadoAppViewModel.temComponentes = ComponentesVisuais()
         configuraBotaoLogin(view)
         configuraBotaoCadastro()
+        configuraBotaoGoogle()
+    }
 
-        login_botao_signin_google.setOnClickListener{
+    private fun configuraBotaoGoogle() {
+        login_botao_signin_google.setOnClickListener {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -125,6 +129,22 @@ class LoginFragment : Fragment() {
         if(resultCode == RESULT_OK && requestCode == RC_SIGN_IN_GOOGLE){
             val contaGoogle = GoogleSignIn.getSignedInAccountFromIntent(data).result
             Log.i(TAG, "Conta google autenticada ${contaGoogle}")
+
+            contaGoogle.let { conta ->
+                val credential = GoogleAuthProvider.getCredential(conta.idToken, null)
+
+                viewModel.vinculaContaGoogle(credential)
+                    .observe(viewLifecycleOwner, Observer {
+                        it?.let { recurso ->
+                            if(recurso.dado){
+                                vaiParaListaProdutos()
+                            }else{
+                                val mensagem = recurso.erro ?: "Falha ao vincular conta google"
+                                view?.snackBar(mensagem)
+                            }
+                        }
+                    })
+            }
         }
     }
 

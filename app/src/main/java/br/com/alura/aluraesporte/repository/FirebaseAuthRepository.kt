@@ -87,4 +87,17 @@ class FirebaseAuthRepository(private val firebaseAuth: FirebaseAuth) {
         }
         return liveData
     }
+
+    fun vinculaContaGoogle(credencial: AuthCredential): LiveData<Resource<Boolean>>{
+        val liveData = MutableLiveData<Resource<Boolean>>()
+
+        firebaseAuth.signInWithCredential(credencial)
+            .addOnSuccessListener {
+                liveData.value = Resource(true)
+            }
+            .addOnFailureListener{
+                liveData.value = Resource(false, "Falha ao vincular com a Google")
+            }
+        return liveData
+    }
 }
