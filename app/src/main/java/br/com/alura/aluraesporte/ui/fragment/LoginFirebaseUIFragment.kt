@@ -54,7 +54,7 @@ class LoginFirebaseUIFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == RC_SIGN_IN){
             if(resultCode == Activity.RESULT_OK){
-                vaiParaListaProdutos()
+//                vaiParaListaProdutos()
             }else{
                 val response = IdpResponse.fromResultIntent(data)
                 Log.e(TAG, "onactivityResult: Falha ao autenticar", response?.error)
@@ -63,10 +63,10 @@ class LoginFirebaseUIFragment : Fragment() {
         }
     }
 
-    private fun vaiParaListaProdutos() {
-        val direcao = LoginFirebaseUIFragmentDirections.acaoInicioParaListaProdutos()
-        controlador.navigate(direcao)
-    }
+//    private fun vaiParaListaProdutos() {
+//        val direcao = LoginFirebaseUIFragmentDirections.acaoInicioParaListaProdutos()
+//        controlador.navigate(direcao)
+//    }
 
     companion object{
         const val RC_SIGN_IN = 1
