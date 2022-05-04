@@ -18,12 +18,13 @@ import br.com.alura.aluraesporte.ui.viewmodel.EstadoAppViewModel
 import br.com.alura.aluraesporte.ui.viewmodel.LoginViewModel
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.android.synthetic.main.login.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class LoginFragment : BaseFragment() {
+class LoginFragment : Fragment() {
 
     private val controlador by lazy {
         findNavController()
@@ -50,10 +51,12 @@ class LoginFragment : BaseFragment() {
         configuraBotaoCadastro()
 
         login_botao_signin_google.setOnClickListener{
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
+            val client = GoogleSignIn.getClient(requireContext(), gso)
+            startActivityForResult(client.signInIntent, RC_SIGN_IN_GOOGLE)
         }
     }
 
@@ -115,6 +118,19 @@ class LoginFragment : BaseFragment() {
     private fun vaiParaListaProdutos() {
         val direcao = LoginFragmentDirections.acaoLoginParaListaProdutos()
         controlador.navigate(direcao)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == RESULT_OK && requestCode == RC_SIGN_IN_GOOGLE){
+            val contaGoogle = GoogleSignIn.getSignedInAccountFromIntent(data).result
+            Log.i(TAG, "Conta google autenticada ${contaGoogle}")
+        }
+    }
+
+    companion object{
+        const val TAG = "LoginFragment"
+        const val RC_SIGN_IN_GOOGLE = 1
     }
 
 }
