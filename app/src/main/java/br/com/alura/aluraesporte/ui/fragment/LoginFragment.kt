@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import br.com.alura.aluraesporte.R
+import br.com.alura.aluraesporte.extensions.googleSignClient
 import br.com.alura.aluraesporte.extensions.snackBar
 import br.com.alura.aluraesporte.model.Usuario
 import br.com.alura.aluraesporte.ui.viewmodel.ComponentesVisuais
@@ -55,12 +56,14 @@ class LoginFragment : Fragment() {
 
     private fun configuraBotaoGoogle() {
         login_botao_signin_google.setOnClickListener {
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-            val client = GoogleSignIn.getClient(requireContext(), gso)
-            startActivityForResult(client.signInIntent, RC_SIGN_IN_GOOGLE)
+            //migrado codigo para a extension
+//            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestEmail()
+//                .build()
+//            val client = GoogleSignIn.getClient(requireContext(), gso)
+            val cliente = requireContext().googleSignClient()
+            startActivityForResult(cliente.signInIntent, RC_SIGN_IN_GOOGLE)
         }
     }
 

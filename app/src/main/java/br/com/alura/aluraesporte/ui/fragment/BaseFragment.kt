@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import br.com.alura.aluraesporte.NavGraphDirections
 import br.com.alura.aluraesporte.R
+import br.com.alura.aluraesporte.extensions.googleSignClient
 import br.com.alura.aluraesporte.ui.viewmodel.LoginViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -31,6 +32,8 @@ abstract class BaseFragment : Fragment() {
         if(item.itemId == R.id.menu_principal_deslogar){
             loginViewModel.desloga()
 //            vaiParaInicio()
+            //deslogando a conta google
+            requireContext().googleSignClient().signOut()
             vaiParaLogin()
         }
         return super.onOptionsItemSelected(item)
