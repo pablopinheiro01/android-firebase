@@ -66,6 +66,7 @@ dependencies {
 
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
 
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
 
 
     // Koin main features for Android

@@ -18,6 +18,7 @@ import br.com.alura.aluraesporte.ui.viewmodel.EstadoAppViewModel
 import br.com.alura.aluraesporte.ui.viewmodel.LoginViewModel
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.android.synthetic.main.login.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -45,25 +46,24 @@ class LoginFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         estadoAppViewModel.temComponentes = ComponentesVisuais()
+        configuraBotaoLogin(view)
+        configuraBotaoCadastro()
 
-        var authUI = AuthUI.getInstance()
-        val intent = authUI.createSignInIntentBuilder().setAvailableProviders(
-            listOf(AuthUI.IdpConfig.EmailBuilder().build())
-        ).build()
-
-        startActivityForResult(intent, RC_SIGN_IN)
-
-//        configuraBotaoLogin(view)
-//        configuraBotaoCadastro()
+        login_botao_signin_google.setOnClickListener{
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        }
     }
 
-//    private fun configuraBotaoCadastro() {
-//        login_botao_cadastrar_usuario.setOnClickListener {
-//            val direcao = LoginFragmentDirections
-//                .acaoLoginParaCadastroUsuario()
-//            controlador.navigate(direcao)
-//        }
-//    }
+    private fun configuraBotaoCadastro() {
+        login_botao_cadastrar_usuario.setOnClickListener {
+            val direcao = LoginFragmentDirections
+                .acaoLoginParaCadastroUsuario()
+            controlador.navigate(direcao)
+        }
+    }
 
     private fun configuraBotaoLogin(view: View) {
         login_botao_logar.setOnClickListener {
@@ -113,26 +113,8 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun vaiParaListaProdutos() {
-//        val direcao = LoginFragmentDirections.acaoLoginParaListaProdutos()
-//        controlador.navigate(direcao)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == RC_SIGN_IN){
-            if(resultCode == RESULT_OK){
-                vaiParaListaProdutos()
-            }else{
-                val response = IdpResponse.fromResultIntent(data)
-                Log.e(TAG, "onactivityResult: Falha ao autenticar", response?.error)
-                view?.snackBar("falha ao autenticar")
-            }
-        }
-    }
-
-    companion object{
-        const val RC_SIGN_IN = 1
-        const val TAG = "LoginFragment"
+        val direcao = LoginFragmentDirections.acaoLoginParaListaProdutos()
+        controlador.navigate(direcao)
     }
 
 }
